@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<style>
+:root {
+  --primary: #2196f3;
+  --dark: #1565c0;
+  --light: #64b5f6;
+  --background: #1a1a1a;
+  --text: #ffffff;
+}
+
+body {
+  background: var(--background);
+  color: var(--text);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center; /* Added for vertical centering */
+  min-height: 100vh;
+  box-sizing: border-box; /* Added to include padding in height calc */
+}
+
+.player-container {
+  background: #252525;
+  border-radius: 15px;
+  padding: 20px;
+  width: 100%; /* Changed from 400px */
+  max-width: 800px; /* Added max-width */
+  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+.playlist-container {
+  background: #2d2d2d;
+  border-radius: 10px;
+  padding: 15px;
+  margin-top: 20px;
+  max-height: 40vh; /* Changed from 300px to be relative to viewport */
+  overflow-y: auto;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.btn {
+  background: var(--primary);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.btn.active {
+  background: var(--dark);
+  border: 2px solid var(--light);
+}
+
+.btn:hover {
+  background: var(--dark);
+  transform: scale(1.1);
+}
+
+.btn-small {
+  width: 35px;
+  height: 35px;
+}
+
+.progress-container {
+  width: 100%;
+  height: 5px;
+  background: #404040;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.progress-bar {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 3px;
+  transition: width 0.1s linear;
+}
+
+.track-info {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.track-title {
+  font-size: 1.2em;
+  margin: 0;
+}
+
+.track-artist {
+  color: #888;
+  font-size: 0.9em;
+}
+
+.playlist-item {
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.playlist-item:hover {
+  background: #353535;
+}
+
+.playlist-item.active {
+  background: var(--primary);
+}
+
+.visualizer {
+  height: 30px; 
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1px; /* Increased from 0.5px for less density */
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.bar {
+  width: 1px; /* Increased from 0.5px for slightly thicker bars */
+  background: var(--primary);
+  height: 5px; /* Default height reduced from 20px */
+  border-radius: 1px;
+  transition: height 0.05s ease-out;
+  flex: 1;
+}
+
+.file-controls {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.file-input-container {
+  margin: 0; /* Update from 20px 0 */
+}
+
+.file-input-label {
+  background: var(--primary);
+  padding: 10px 20px;
+  border-radius: 25px;
+  cursor: pointer;
+  display: inline-block;
+  transition: background 0.2s;
+}
+
+.file-input-label:hover {
+  background: var(--dark);
+}
+
+.file-input {
+  display: none;
+}
+
+.drag-area {
+  flex: 1;
+  margin: 0; /* Update from 20px 0 */
+  min-height: 45px; /* Match height of browse button */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.supported-formats {
+  font-size: 0.8em;
+  color: #888;
+  margin-top: 5px;
+}
+
+.drag-area {
+  border: 2px dashed var(--primary);
+  border-radius: 10px;
+  padding: 20px;
+  margin: 20px 0;
+  text-align: center;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.drag-area.dragover {
+  border-color: var(--light);
+  background: rgba(33, 150, 243, 0.1);
+}
+
+.time-progress-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+#currentTime, #totalTime {
+  font-size: 0.8em;
+  color: #888;
+  min-width: 45px;
+}
+
+.volume-slider-container {
+  display: flex;
+  align-items: center;
+  width: 100px;
+}
+
+.volume-slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: #404040;
+  outline: none;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.volume-slider:hover {
+  opacity: 1;
+}
+
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--primary);
+  cursor: pointer;
+}
+
+.volume-slider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--primary);
+  cursor: pointer;
+  border: none;
+}
+
+.btn i {
+  font-size: 15px;
+}
+
+.btn#playBtn i {
+  font-size: 20px;
+}
+</style>
+</head>
+<body>
+
+<div class="player-container">
+  <div class="visualizer" id="visualizer">
+    <!-- Bars will be added dynamically -->
+  </div>
+  
+  <div class="file-controls">
+    <div class="file-input-container">
+      <label class="file-input-label">
+        Browse Files
+        <input type="file" class="file-input" id="fileInput" accept="audio/*" multiple>
+      </label>
+    </div>
+
+    <div class="drag-area" id="dragArea">
+      Drag and drop audio files here
+    </div>
+  </div>
+  
+  <div class="track-info">
+    <h3 class="track-title" id="trackTitle">No track selected</h3>
+    <p class="track-artist" id="trackArtist">-</p>
+  </div>
+  
+  <div class="time-progress-container">
+    <span id="currentTime">0:00</span>
+    <div class="progress-container" id="progressContainer">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <span id="totalTime">0:00</span>
+  </div>
+  
+  <div class="controls">
+    <button class="btn btn-small" id="shuffleBtn" title="Shuffle">
+      <i class="fas fa-random"></i>
+    </button>
+    <button class="btn btn-small" id="randomBtn" title="Random Track">
+      <i class="fas fa-dice"></i>
+    </button>
+    <button class="btn btn-small" id="prevBtn" title="Previous">
+      <i class="fas fa-step-backward"></i>
+    </button>
+    <button class="btn btn-small" id="playBtn" title="Play/Pause">
+      <i class="fas fa-play" id="playIcon"></i>
+    </button>
+    <button class="btn btn-small" id="nextBtn" title="Next">
+      <i class="fas fa-step-forward"></i>
+    </button>
+    <button class="btn btn-small" id="repeatBtn" title="Repeat">
+      <i class="fas fa-redo"></i>
+    </button>
+    <button class="btn btn-small" id="volumeBtn" title="Volume">
+      <i class="fas fa-volume-up" id="volumeIcon"></i>
+    </button>
+    <div class="volume-slider-container">
+      <input type="range" id="volumeSlider" class="volume-slider" min="0" max="100" value="100">
+    </div>
+  </div>
+  
+  <div class="playlist-container" id="playlist">
+    <!-- Playlist items will be added dynamically -->
+  </div>
+</div>
+
+<script src="OpenAudio.js"></script>
+</body>
+</html>
